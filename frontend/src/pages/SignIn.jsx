@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
+import axios from 'axios';
 
 import { useNavigate } from 'react-router-dom'
 
@@ -25,9 +26,20 @@ const SignIn = () => {
    
 
     const handleSignin = async () => {
-        console.log("handle sign in")
+        setLoading(true)
+        try {
+            const result = await axios.post(`http://localhost:5000/api/auth/signin`, {
+                email, password
+            }, { withCredentials: true })
+            console.log(result)            
+            setErr("")
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setErr(error?.response?.data?.message)
+            setLoading(false)
+        }
     }
-
     const handleGoogleAuth = async () => {
         console.log("hello everone ")
        
