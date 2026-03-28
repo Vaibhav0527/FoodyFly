@@ -41,7 +41,7 @@ const SignUp = () => {
             console.log(result)
             setErr("")
             setLoading(false)
-
+            navigate("/")
 
         } catch (error) {
             console.log(error)

@@ -4,6 +4,7 @@ import SignUp from './pages/SignUp'
 import Nav from './components/Nav'
 import { useDispatch } from 'react-redux'
 import useGetCity from './hooks/useGetCity'
+import UserDashboard from './components/UserDashboard'
 
 function App() {
   const dispatch=useDispatch()
@@ -11,7 +12,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Nav />} />
+        <Route path="/" element={<UserDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
 

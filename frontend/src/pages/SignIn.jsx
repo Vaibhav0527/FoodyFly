@@ -34,6 +34,7 @@ const SignIn = () => {
             console.log(result)            
             setErr("")
             setLoading(false)
+                navigate("/")
         } catch (error) {
             console.log(error)
             setErr(error?.response?.data?.message)
