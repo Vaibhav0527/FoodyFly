@@ -5,14 +5,22 @@ import Nav from './components/Nav'
 import { useDispatch } from 'react-redux'
 import useGetCity from './hooks/useGetCity'
 import UserDashboard from './components/UserDashboard'
+import OwnerDashboard from './components/OwnerDashboard'
+import useGetCurrentUser from './hooks/useGetCurrentUser'
+import useGetMyShopData from './hooks/useGetMyShopData'
 
+
+export const serverUrl="http://localhost:5000"
 function App() {
   const dispatch=useDispatch()
   useGetCity()
+  useGetCurrentUser()  
+useGetMyShopData()
+   
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<UserDashboard />} />
+        <Route path="/" element={<OwnerDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
 
