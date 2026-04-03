@@ -8,6 +8,7 @@ import UserDashboard from './components/UserDashboard'
 import OwnerDashboard from './components/OwnerDashboard'
 import useGetCurrentUser from './hooks/useGetCurrentUser'
 import useGetMyShopData from './hooks/useGetMyShopData'
+import CreateEditShop from './pages/CreateEditShop'
 
 
 export const serverUrl="http://localhost:5000"
@@ -23,6 +24,7 @@ useGetMyShopData()
         <Route path="/" element={<OwnerDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
+        <Route path="/create-edit-shop" element={<CreateEditShop />} />
 
       </Routes>
     </Router>

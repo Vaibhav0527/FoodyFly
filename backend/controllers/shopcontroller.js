@@ -1,5 +1,6 @@
 
 import Shop from "../models/shopmodle.js";
+import "../models/itemmodel.js";
 import uploadOnCloudinary from "../utils/coudinary.js";
 
 export const createEditShop=async (req,res) => {

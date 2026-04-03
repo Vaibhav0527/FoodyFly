@@ -8,6 +8,11 @@ import authRouter from "./routes/authroutes.js";
 import shopRouter from "./routes/shoproutes.js";
 import userRouter from "./routes/userroutes.js";
 
+// Register models once at startup (required for populate refs)
+import "./models/usermodel.js";
+import "./models/shopmodle.js";
+import "./models/itemmodel.js";
+
 
 const app=express();
 app.use(express.json());
