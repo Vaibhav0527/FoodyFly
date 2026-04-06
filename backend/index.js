@@ -12,6 +12,8 @@ import userRouter from "./routes/userroutes.js";
 import "./models/usermodel.js";
 import "./models/shopmodle.js";
 import "./models/itemmodel.js";
+import itemRouter from "./routes/itemroutes.js";
+
 
 
 const app=express();
@@ -33,6 +35,8 @@ const PORT=process.env.PORT || 5000;
 app.use("/api/auth",authRouter);
 app.use("/api/shop",shopRouter);
 app.use("/api/user",userRouter);
+app.use("/api/item",itemRouter);
+
 app.listen(PORT,()=>{
     console.log(`server is running on port ${PORT}`);
      connectDb();

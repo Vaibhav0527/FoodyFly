@@ -9,7 +9,8 @@ import OwnerDashboard from './components/OwnerDashboard'
 import useGetCurrentUser from './hooks/useGetCurrentUser'
 import useGetMyShopData from './hooks/useGetMyShopData'
 import CreateEditShop from './pages/CreateEditShop'
-
+import AddItem from './pages/AddItem'
+import EditItem from './pages/EditItem'
 
 export const serverUrl="http://localhost:5000"
 function App() {
@@ -25,7 +26,8 @@ useGetMyShopData()
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/create-edit-shop" element={<CreateEditShop />} />
-
+     <Route path="/add-item" element={<AddItem />} />
+      <Route path="/edit-item/:itemId" element={<EditItem />} />
       </Routes>
     </Router>
   )
