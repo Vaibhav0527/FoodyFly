@@ -11,6 +11,7 @@ import useGetMyShopData from './hooks/useGetMyShopData'
 import CreateEditShop from './pages/CreateEditShop'
 import AddItem from './pages/AddItem'
 import EditItem from './pages/EditItem'
+import useGetShopByCity from './hooks/useGetShopByCity'
 
 export const serverUrl="http://localhost:5000"
 function App() {
@@ -18,11 +19,12 @@ function App() {
   useGetCity()
   useGetCurrentUser()  
 useGetMyShopData()
+useGetShopByCity()
    
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<OwnerDashboard />} />
+        <Route path="/" element={<UserDashboard />} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/create-edit-shop" element={<CreateEditShop />} />

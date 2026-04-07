@@ -27,7 +27,7 @@ const NavOwner = () => {
     <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-[#fff9f6] shadow-md'>
       
       <h1 className="text-3xl font-bold text-[#ff4d2d] tracking-wide">
-        Vingo
+        FOODYFLY
       </h1>
 
       {myShopData && (

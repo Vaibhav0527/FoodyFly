@@ -42,3 +42,20 @@ export const getMyShop=async (req,res) => {
         return res.status(500).json({message:`get my shop error ${error}`})
     }
 }
+
+export const getShopsByCity = async (req, res) => {
+    try {
+        const city = (req.params.city ?? "").trim()
+        if (!city) {
+            return res.status(400).json({ message: "city is required" })
+        }
+
+        const shops = await Shop.find({ city: { $regex: new RegExp(`^${city}$`, "i") } })
+            .select("name image city state address items")
+            .sort({ updatedAt: -1 })
+
+        return res.status(200).json(shops)
+    } catch (error) {
+        return res.status(500).json({ message: `get shops by city error ${error}` })
+    }
+}

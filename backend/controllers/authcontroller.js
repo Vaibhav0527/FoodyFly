@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 
 export const signUp=async(req,res)=>{
     try{
-        const{fullname,email,password,mobile,role}=req.body;
+        const{name,email,password,mobile,role}=req.body;
         let user=await User.findOne({email})
         if(user){
             return res.status(400).json({message:"user already exixt. "})
@@ -19,7 +19,7 @@ export const signUp=async(req,res)=>{
         }
         const hashedpassword=await bcrypt.hash(password,10)
         user=await User.create({
-            fullname,
+            name,
             email,
             mobile,
             role,
