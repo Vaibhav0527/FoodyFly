@@ -9,7 +9,7 @@ const itemRouter=express.Router()
 itemRouter.post("/add-item",isAuth,upload.single("image"),addItem)
 itemRouter.get("/delete/:itemId",isAuth,deleteItem)
 itemRouter.get("/get-by-id/:itemId",isAuth,getItemById)
-itemRouter.get("/get-by-city/:city",isAuth,getItemByCity)
+itemRouter.get("/get-by-city/:city",getItemByCity)
 
 itemRouter.post("/edit-item/:itemId",isAuth,upload.single("image"),editItem)
 

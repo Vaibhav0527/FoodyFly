@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import availfood from '../assets/foodavaiable.png'
 import restrofound from '../assets/restrofound.png'
+import FoodCard from './FoodCard';
 
 const UserDashboard = () => {
 
@@ -154,6 +155,22 @@ const UserDashboard = () => {
               <FaCircleChevronRight />
             </button>
           }
+        </div>
+      </div>
+      <div className='w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]'>
+        <h1 className='text-gray-800 text-2xl sm:text-3xl'>Suggested Food Items</h1>
+
+        <div className='w-full h-auto flex flex-wrap gap-[20px] justify-center'>
+          {updatedItemsList.length > 0 ? (
+            updatedItemsList.map((item, index) => (
+              <FoodCard key={index} data={item} />
+            ))
+          ) : (
+            <div className='flex flex-col items-center justify-center w-full py-10'>
+              <img src={availfood} alt="No food available" className='w-56 h-56 object-contain opacity-90' />
+              <p className='text-gray-600 text-lg mt-3 font-medium'>No available food items right now</p>
+            </div>
+          )}
         </div>
       </div>
 

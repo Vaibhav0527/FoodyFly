@@ -13,6 +13,16 @@ import AddItem from './pages/AddItem'
 import EditItem from './pages/EditItem'
 import useGetShopByCity from './hooks/useGetShopByCity'
 
+import useGetItemsByCity from './hooks/useGetItemsByCity'
+
+
+
+
+
+
+
+import Cart from './pages/CartPage'
+
 export const serverUrl="http://localhost:5000"
 function App() {
   const dispatch=useDispatch()
@@ -20,6 +30,9 @@ function App() {
   useGetCurrentUser()  
 useGetMyShopData()
 useGetShopByCity()
+
+
+useGetItemsByCity()
    
   return (
     <Router>
@@ -30,6 +43,7 @@ useGetShopByCity()
         <Route path="/create-edit-shop" element={<CreateEditShop />} />
      <Route path="/add-item" element={<AddItem />} />
       <Route path="/edit-item/:itemId" element={<EditItem />} />
+      <Route path='/cart' element={<Cart />} />
       </Routes>
     </Router>
   )
