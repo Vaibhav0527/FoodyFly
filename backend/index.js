@@ -13,6 +13,7 @@ import "./models/usermodel.js";
 import "./models/shopmodle.js";
 import "./models/itemmodel.js";
 import itemRouter from "./routes/itemroutes.js";
+import orderRouter from "./routes/orderroutes.js";
 
 
 
@@ -36,6 +37,7 @@ app.use("/api/auth",authRouter);
 app.use("/api/shop",shopRouter);
 app.use("/api/user",userRouter);
 app.use("/api/item",itemRouter);
+app.use("/api/order",orderRouter);
 
 app.listen(PORT,()=>{
     console.log(`server is running on port ${PORT}`);

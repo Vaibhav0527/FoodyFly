@@ -22,6 +22,7 @@ import useGetItemsByCity from './hooks/useGetItemsByCity'
 
 
 import Cart from './pages/CartPage'
+import CheckOut from './pages/CheckOut'
 
 export const serverUrl="http://localhost:5000"
 function App() {
@@ -44,6 +45,7 @@ useGetItemsByCity()
      <Route path="/add-item" element={<AddItem />} />
       <Route path="/edit-item/:itemId" element={<EditItem />} />
       <Route path='/cart' element={<Cart />} />
+      <Route path='/checkout' element={<CheckOut />} />
       </Routes>
     </Router>
   )

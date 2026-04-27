@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { use } from "react";
 
 const userSlice=createSlice({
     name:"user",
@@ -9,6 +8,7 @@ const userSlice=createSlice({
         shopInMyCity:null,
         itemsInMyCity:null,
         cartItems:[],
+        totalAmount:0,
           
 
     },
@@ -47,7 +47,11 @@ const userSlice=createSlice({
             const id=action.payload
             state.cartItems=state.cartItems.filter(i=>i.id!==id)
             state.totalAmount=state.cartItems.reduce((total,item)=>total+item.price*item.quantity,0)    
+        },
+        clearCart:(state)=>{
+            state.cartItems=[]
+            state.totalAmount=0
         }
 }})
-export const {setCurrentCity, setUserData, setShopsInMyCity, setItemsInMyCity, addToCart, updateQuantity, removeCartItem}=userSlice.actions
+export const {setCurrentCity, setUserData, setShopsInMyCity, setItemsInMyCity, addToCart, updateQuantity, removeCartItem, clearCart}=userSlice.actions
 export default userSlice.reducer
