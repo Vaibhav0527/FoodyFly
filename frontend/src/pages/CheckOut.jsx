@@ -3,6 +3,12 @@ import { IoIosArrowRoundBack } from "react-icons/io"
 import { IoSearchOutline } from "react-icons/io5"
 import { TbCurrentLocation } from "react-icons/tb"
 import { IoLocationSharp } from "react-icons/io5"
+import { MapContainer, Marker, TileLayer, useMap } from 'react-leaflet'
+import L from 'leaflet'
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png'
+import markerIcon from 'leaflet/dist/images/marker-icon.png'
+import markerShadow from 'leaflet/dist/images/marker-shadow.png'
+import 'leaflet/dist/leaflet.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { MdDeliveryDining } from "react-icons/md"
 import { FaCreditCard } from "react-icons/fa"
@@ -11,6 +17,27 @@ import { FaMobileScreenButton } from "react-icons/fa6"
 import { useNavigate } from 'react-router-dom'
 import { clearCart } from '../redux/userSlice'
 import { serverUrl } from '../App'
+
+delete L.Icon.Default.prototype._getIconUrl
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow
+})
+
+function RecenterMap({ location }) {
+  const map = useMap()
+
+  useEffect(() => {
+    if (!location?.lat || !location?.lon) {
+      return
+    }
+
+    map.setView([location.lat, location.lon], 16, { animate: true })
+  }, [location, map])
+
+  return null
+}
 
 function CheckOut() {
   const { cartItems, totalAmount } = useSelector(state => state.user)
@@ -40,7 +67,15 @@ function CheckOut() {
       const longitude = position.coords.longitude
       setLocation({ lat: latitude, lon: longitude })
       getAddressByLatLng(latitude, longitude)
+    }, () => {
+      alert("Location access denied. Please allow location or search by address.")
     })
+  }
+
+  const onMarkerDragEnd = (e) => {
+    const { lat, lng } = e.target.getLatLng()
+    setLocation({ lat, lon: lng })
+    getAddressByLatLng(lat, lng)
   }
 
   const getLatLngByAddress = async () => {
@@ -160,7 +195,20 @@ function CheckOut() {
             <button className='bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg flex items-center justify-center' onClick={getCurrentLocation}><TbCurrentLocation size={17} /></button>
           </div>
 
-          <div className='rounded-xl border bg-gray-50 p-3 text-sm text-gray-700'>
+          <div className='rounded-xl border overflow-hidden'>
+            <div className='h-64 w-full'>
+              <MapContainer className='h-full w-full' center={[location.lat, location.lon]} zoom={16}>
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+                />
+                <RecenterMap location={location} />
+                <Marker position={[location.lat, location.lon]} draggable eventHandlers={{ dragend: onMarkerDragEnd }} />
+              </MapContainer>
+            </div>
+          </div>
+
+          <div className='rounded-xl border bg-gray-50 p-3 text-sm text-gray-700 mt-3'>
             <p>Latitude: {location?.lat?.toFixed ? location.lat.toFixed(6) : location?.lat}</p>
             <p>Longitude: {location?.lon?.toFixed ? location.lon.toFixed(6) : location?.lon}</p>
           </div>
