@@ -1,45 +1,50 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import cors from "cors";
-import cookieParser from "cookie-parser";
-import connectDb from "./config/db.js";
-import authRouter from "./routes/authroutes.js";
-import shopRouter from "./routes/shoproutes.js";
-import userRouter from "./routes/userroutes.js";
+import express from "express"
+import dotenv from "dotenv"
+dotenv.config()
 
-// Register models once at startup (required for populate refs)
-import "./models/usermodel.js";
-import "./models/shopmodle.js";
-import "./models/itemmodel.js";
-import itemRouter from "./routes/itemroutes.js";
-import orderRouter from "./routes/orderroutes.js";
-
+import connectDb from "./config/db.js"
+import cookieParser from "cookie-parser"
+import authRouter from "./routes/authroutes.js"
+import cors from "cors"
+import userRouter from "./routes/userroutes.js"
+import itemRouter from "./routes/itemroutes.js"
+import shopRouter from "./routes/shoproutes.js"
+import orderRouter from "./routes/orderroutes.js"
+import http from "http"  
+import { Server } from "socket.io"
+import { socketHandler } from "./socket.js"
 
 
-const app=express();
-app.use(express.json());
-app.use(cookieParser());
-app.use(cors(
-    {
+const app=express()
+const server=http.createServer(app)
+const io=new Server(server,{
+    cors:{
         origin:"http://localhost:5173",
         credentials:true,
-        methods:["GET","POST","PUT","DELETE"],}
-));
+        methods:["GET","POST"]
+    }
+})
+app.set("io",io)
 
-dotenv.config();
+const port=process.env.PORT || 5000
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
 
-const PORT=process.env.PORT || 5000;
+
+}))
+app.use(express.json());
+app.use(cookieParser());
+app.use("/api/auth",authRouter)
+app.use("/api/user",userRouter)
+app.use("/api/shop",shopRouter)
+app.use("/api/item",itemRouter)
+app.use("/api/order",orderRouter)
 
 
+socketHandler(io)
 
-app.use("/api/auth",authRouter);
-app.use("/api/shop",shopRouter);
-app.use("/api/user",userRouter);
-app.use("/api/item",itemRouter);
-app.use("/api/order",orderRouter);
-
-app.listen(PORT,()=>{
-    console.log(`server is running on port ${PORT}`);
-     connectDb();
+server.listen(port,()=>{
+    connectDb();
+    console.log(`server started at port ${port}`)
 })

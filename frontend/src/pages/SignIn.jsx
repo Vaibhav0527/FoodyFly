@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import axios from 'axios';
-
-import { useNavigate } from 'react-router-dom'
-
+import axios from "axios"
+import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '../../firebase';
 import { ClipLoader } from "react-spinners"
-
-
-
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
+import { serverUrl } from '../App';
 
 const SignIn = () => {
     const primaryColor = "#ff4d2d";
@@ -17,34 +17,45 @@ const SignIn = () => {
     const bgColor = "#fff9f6";
     const borderColor = "#ddd";
     const [showPassword, setShowPassword] = useState(false)
-    const [err, setErr] = useState("")
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
-   
+    const [err, setErr] = useState("")
     const [loading, setLoading] = useState(false)
     const navigate = useNavigate()
-   
+    const dispatch=useDispatch()
 
     const handleSignin = async () => {
         setLoading(true)
         try {
-            const result = await axios.post(`http://localhost:5000/api/auth/signin`, {
+            const result = await axios.post(`${serverUrl}/api/auth/signin`, {
                 email, password
             }, { withCredentials: true })
-            console.log(result)            
+            console.log(result)
+            dispatch(setUserData(result.data))
             setErr("")
             setLoading(false)
-                navigate("/")
         } catch (error) {
             console.log(error)
             setErr(error?.response?.data?.message)
             setLoading(false)
         }
     }
+
     const handleGoogleAuth = async () => {
         console.log("hello everone ")
        
-       
+        const provider = new GoogleAuthProvider()
+        const result = await signInWithPopup(auth, provider)
+
+        try {
+            const { data } = await axios.post(`${serverUrl}/api/auth/google-auth`, {
+                email: result.user.email,
+            }, { withCredentials: true })
+            dispatch(setUserData(data))
+        } catch (error) {
+            console.log(error)
+        }
 
     }
 

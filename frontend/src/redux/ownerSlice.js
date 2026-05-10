@@ -2,8 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const ownerSlice=createSlice({
     name:"owner",
     initialState:{
-        myShopData:null,
-          
+        myShopData:null  
     },
     reducers:{
         setMyShopData:(state,action)=>{

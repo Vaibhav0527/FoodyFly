@@ -1,53 +1,74 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
-import SignIn from './pages/SignIn'
+import React, { useEffect } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import SignUp from './pages/SignUp'
-import Nav from './components/Nav'
-import { useDispatch } from 'react-redux'
-import useGetCity from './hooks/useGetCity'
-import UserDashboard from './components/UserDashboard'
-import OwnerDashboard from './components/OwnerDashboard'
+import SignIn from './pages/SignIn'
+import Forgotpassword from './pages/Forgotpassword'
 import useGetCurrentUser from './hooks/useGetCurrentUser'
-import useGetMyShopData from './hooks/useGetMyShopData'
+import { useDispatch, useSelector } from 'react-redux'
+import Home from './pages/Home'
+import useGetCity from './hooks/useGetCity'
+import useGetMyShopData from './hooks/UseGetMyShopData'
 import CreateEditShop from './pages/CreateEditShop'
 import AddItem from './pages/AddItem'
 import EditItem from './pages/EditItem'
 import useGetShopByCity from './hooks/useGetShopByCity'
-
 import useGetItemsByCity from './hooks/useGetItemsByCity'
-
-
-
-
-
-
-
-import Cart from './pages/CartPage'
+import CartPage from './pages/cartPage'
 import CheckOut from './pages/CheckOut'
+import OrderPlaced from './pages/OrderPlaced'
+import MyOrders from './pages/MyOrders'
+import useGetMyOrders from './hooks/useGetMyOrders'
+import useUpdateLocation from './hooks/useUpdateLocation'
+import TrackOrderPage from './pages/TrackOrderPage'
+import Shop from './pages/Shop'
+import { io } from 'socket.io-client'
+import { setSocket } from './redux/userSlice'
 
-export const serverUrl="http://localhost:5000"
-function App() {
+
+export const serverUrl="http://localhost:8000"
+const App = () => {
   const dispatch=useDispatch()
+  useGetCurrentUser()
   useGetCity()
-  useGetCurrentUser()  
-useGetMyShopData()
-useGetShopByCity()
+  useGetMyShopData()
+  useGetShopByCity()
+  useGetItemsByCity()
+  useGetMyOrders()
+  useUpdateLocation()
+  const {userData}=useSelector(state=>state.user)
 
 
-useGetItemsByCity()
-   
+   useEffect(()=>{
+const socketInstance=io(serverUrl,{withCredentials:true})
+dispatch(setSocket(socketInstance))
+socketInstance.on('connect',()=>{
+if(userData){
+  socketInstance.emit('identity',{userId:userData._id})
+}
+})
+return ()=>{
+  socketInstance.disconnect()
+}
+  },[userData?._id])
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<UserDashboard />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/create-edit-shop" element={<CreateEditShop />} />
-     <Route path="/add-item" element={<AddItem />} />
-      <Route path="/edit-item/:itemId" element={<EditItem />} />
-      <Route path='/cart' element={<Cart />} />
-      <Route path='/checkout' element={<CheckOut />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path='/signup' element={!userData?<SignUp/>:<Navigate to={"/"}/>}/>
+      <Route path='/signin' element={!userData?<SignIn/>:<Navigate to={"/"}/>}/>
+      <Route path='/forgot-password' element={!userData?<Forgotpassword/>:<Navigate to={"/"}/>}/>
+      <Route path='/' element={userData?<Home/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/create-edit-shop' element={userData?<CreateEditShop/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/add-item' element={userData?<AddItem/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/edit-item/:itemId' element={userData?<EditItem/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/cart' element={userData?<CartPage/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/checkout' element={userData?<CheckOut/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/order-placed' element={userData?<OrderPlaced/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/my-orders' element={userData?<MyOrders/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/track-order/:orderId' element={userData?<TrackOrderPage/>:<Navigate to={"/signin"}/>}/>                             
+      <Route path='/shop/:shopId' element={userData?<Shop/>:<Navigate to={"/signin"}/>}/>
+      
+      
+
+    </Routes>
   )
 }
 

@@ -4,19 +4,16 @@ import CategoryCard from './CategoryCard'
 import { categories } from '../category'
 import { FaCircleChevronLeft, FaCircleChevronRight } from "react-icons/fa6";
 import { useSelector } from 'react-redux';
+import FoodCard from './FoodCard';
 import { useNavigate } from 'react-router-dom';
 import availfood from '../assets/foodavaiable.png'
 import restrofound from '../assets/restrofound.png'
-import FoodCard from './FoodCard';
 
 const UserDashboard = () => {
 
   const cateScrollRef = useRef()
   const shopScrollRef = useRef()
   const { currentCity, shopInMyCity, itemsInMyCity, searchItems } = useSelector(state => state.user)
-  const shops = shopInMyCity ?? []
-  const items = itemsInMyCity ?? []
-  const results = searchItems ?? []
   const [showLeftCateButton, setShowLeftCateButton] = useState(false)
   const [showRightCateButton, setShowRightCateButton] = useState(false)
   const [showLeftShopButton, setShowLeftShopButton] = useState(false)
@@ -26,15 +23,15 @@ const UserDashboard = () => {
 
   const handleFilterByCategory = (category) => {
     if (category === "All") {
-      setUpdatedItemsList(items)
+      setUpdatedItemsList(itemsInMyCity)
     } else {
-      const filteredList = items.filter(i => i.category === category)
+      const filteredList = itemsInMyCity?.filter(i => i.category === category)
       setUpdatedItemsList(filteredList)
     }
   }
 
   useEffect(() => {
-    setUpdatedItemsList(items)
+    setUpdatedItemsList(itemsInMyCity)
   }, [itemsInMyCity])
 
   const updateButton = (ref, setLeftButton, setRightButton) => {
@@ -77,18 +74,13 @@ const UserDashboard = () => {
       <Nav />
 
       {/* Search Results */}
-      {results.length > 0 && (
+      {searchItems && searchItems.length > 0 && (
         <div className='w-full max-w-6xl flex flex-col gap-5 items-start p-5 bg-white shadow-md rounded-2xl mt-4'>
           <h1 className='text-gray-900 text-2xl sm:text-3xl font-semibold border-b border-gray-200 pb-2'>
             Search Results
           </h1>
           <div className='w-full h-auto flex flex-wrap gap-6 justify-center'>
-            {results.map((item) => (
-              <div key={item?._id} className='w-full max-w-sm rounded-xl border border-gray-200 bg-white p-4 shadow-sm'>
-                <p className='text-base font-semibold text-gray-900'>{item?.name ?? 'Item'}</p>
-                {item?.description && <p className='mt-1 text-sm text-gray-600 line-clamp-2'>{item.description}</p>}
-              </div>
-            ))}
+            {searchItems.map(item => <FoodCard data={item} key={item._id} />)}
           </div>
         </div>
       )}
@@ -133,8 +125,8 @@ const UserDashboard = () => {
           }
 
           <div className='w-full flex overflow-x-auto gap-4 pb-2' ref={shopScrollRef}>
-            {shops.length > 0 ? (
-              shops.map((shop, index) => (
+            {shopInMyCity.length > 0 ? (
+              shopInMyCity.map((shop, index) => (
                 <CategoryCard
                   name={shop.name}
                   image={shop.image}
@@ -157,6 +149,8 @@ const UserDashboard = () => {
           }
         </div>
       </div>
+
+      {/* Suggested Food Items */}
       <div className='w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]'>
         <h1 className='text-gray-800 text-2xl sm:text-3xl'>Suggested Food Items</h1>
 
@@ -173,9 +167,6 @@ const UserDashboard = () => {
           )}
         </div>
       </div>
-
-    
-     
     </div>
   )
 }

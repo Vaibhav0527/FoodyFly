@@ -7,7 +7,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { serverUrl } from '../App';
 
-const NavOwner = () => {
+const Navboy = () => {
   const navigate = useNavigate();
   const { userData,myOrders } = useSelector(state => state.user);
   const { myShopData } = useSelector(state => state.owner);
@@ -27,7 +27,7 @@ const NavOwner = () => {
     <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-[#fff9f6] shadow-md'>
       
       <h1 className="text-3xl font-bold text-[#ff4d2d] tracking-wide">
-        Foodie Fly 
+        Vingo
       </h1>
 
       {myShopData && (
@@ -73,4 +73,4 @@ const NavOwner = () => {
   ) 
 }
 
-export default NavOwner;
+export default Navboy;

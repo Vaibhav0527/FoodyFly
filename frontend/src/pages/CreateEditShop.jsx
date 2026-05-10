@@ -19,7 +19,6 @@ const CreateEditShop = () => {
     const [name, setName] = useState(myShopData?.name || "")
     const [address, setAddress] = useState(myShopData?.address || currentAddress)
     const [city, setCity] = useState(myShopData?.city || currentCity)
-    
     const [state, setState] = useState(myShopData?.state || currentState)
     const [frontendImage, setFrontendImage] = useState(myShopData?.image || null)
     const [backendImage, setBackendImage] = useState(null)

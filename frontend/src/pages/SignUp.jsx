@@ -2,14 +2,14 @@ import React, { useState } from 'react'
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import axios from 'axios';
-
+import axios from "axios"
 import { useNavigate } from 'react-router-dom';
-
-
+import { auth } from '../../firebase';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { ClipLoader } from "react-spinners"
-
-
+import { useDispatch } from 'react-redux';
+import { setUserData } from '../redux/userSlice';
+import { serverUrl } from '../App';
 
 
 // ...existing code...
@@ -28,20 +28,20 @@ const SignUp = () => {
     const [password, setPassword] = useState("")
     const [mobile, setMobile] = useState("")
     const [err, setErr] = useState("")
-    
     const navigate = useNavigate()
-    
+    const dispatch=useDispatch()
     const [loading, setLoading] = useState(false)
     const handleSignUp = async () => {
         setLoading(true)
         try {
-            const result = await axios.post(`http://localhost:5000/api/auth/signup`, {
-                name:fullname, email, password, mobile, role
-            }, { withCredentials: true })            
+            const result = await axios.post(`${serverUrl}/api/auth/signup`, {
+                fullname, email, password, mobile, role
+            }, { withCredentials: true })
+            dispatch(setUserData(result.data))
             console.log(result)
             setErr("")
             setLoading(false)
-            navigate("/")
+
 
         } catch (error) {
             console.log(error)
@@ -51,7 +51,24 @@ const SignUp = () => {
     }
 
     const handleGoogleAuth = async () => {
-        console.log("hello everyone ")        
+        console.log("hello everyone ")
+        if (!mobile) {
+            return setErr("mobile no is required")
+        }
+        const provider = new GoogleAuthProvider()
+        const result = await signInWithPopup(auth, provider)
+        console.log(result)
+        try {
+            const { data } = await axios.post(`${serverUrl}/api/auth/google-auth`, {
+                fullName: result.user.displayName,
+                email: result.user.email,
+                role,
+                mobile
+            }, { withCredentials: true })
+            dispatch(setUserData(data))
+        } catch (error) {
+            console.log(error)
+        }
     }
 
 
