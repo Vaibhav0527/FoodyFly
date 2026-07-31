@@ -7,13 +7,13 @@ import useGetCurrentUser from './hooks/useGetCurrentUser'
 import { useDispatch, useSelector } from 'react-redux'
 import Home from './pages/Home'
 import useGetCity from './hooks/useGetCity'
-import useGetMyShopData from './hooks/UseGetMyShopData'
+import useGetMyShopData from './hooks/useGetMyShopData'
 import CreateEditShop from './pages/CreateEditShop'
 import AddItem from './pages/AddItem'
 import EditItem from './pages/EditItem'
 import useGetShopByCity from './hooks/useGetShopByCity'
 import useGetItemsByCity from './hooks/useGetItemsByCity'
-import CartPage from './pages/cartPage'
+import CartPage from './pages/CartPage'
 import CheckOut from './pages/CheckOut'
 import OrderPlaced from './pages/OrderPlaced'
 import MyOrders from './pages/MyOrders'
@@ -27,7 +27,7 @@ import Loader from './components/Loader'
 import Profile from './pages/Profile'
 
 
-export const serverUrl="http://localhost:8000"
+export const serverUrl = import.meta.env.VITE_API_URL || "https://foodyfly-qyzr.onrender.com"
 const App = () => {
   const dispatch=useDispatch()
   useGetCurrentUser()
