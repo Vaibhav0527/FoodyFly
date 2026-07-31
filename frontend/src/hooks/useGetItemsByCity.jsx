@@ -9,6 +9,7 @@ import { serverUrl } from '../App';
 function useGetItemsByCity(city) {
     const dispatch=useDispatch();
     const {currentCity}=useSelector(state=>state.user);
+    const {userData}=useSelector(state=>state.user);
   useEffect(()=>{
   const fetchItems=async () => {
     try {
@@ -20,9 +21,9 @@ function useGetItemsByCity(city) {
         console.log(error)
     }
 }
-fetchItems()
+if (userData && currentCity) fetchItems()
 
-  },[currentCity])
+  },[currentCity, userData])
 }
 
 export default useGetItemsByCity;

@@ -19,9 +19,9 @@ function OwnerItemCard({data}) {
       }
     }
   return (
-    <div className='flex bg-white rounded-lg shadow-md overflow-hidden border border-[#ff4d2d] w-full max-w-2xl'>
-      <div className='w-36  flex-shrink-0 bg-gray-50'>
-        <img src={data.image} alt="" className='w-full h-full object-cover'/>
+    <div className='flex bg-white rounded-xl shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden border border-gray-100 w-full max-w-2xl'>
+      <div className='w-36 flex-shrink-0 bg-gray-50'>
+        <img src={data.image} alt="" className='w-full h-full object-cover transition-transform duration-500 hover:scale-105'/>
       </div>
       <div className='flex flex-col justify-between p-3 flex-1'>
           <div>

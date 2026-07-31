@@ -8,12 +8,16 @@ import { FaUtensils } from "react-icons/fa";
 import FoodCard from '../components/FoodCard';
 import { FaArrowLeft } from "react-icons/fa";
 import { serverUrl } from '../App';
+import Loader from '../components/Loader';
+
 function Shop() {
     const {shopId}=useParams()
     const [items,setItems]=useState([])
     const [shop,setShop]=useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const navigate=useNavigate()
     const handleShop=async () => {
+        setIsLoading(true)
         try {
             const result=await axios.get(`${serverUrl}/api/item/get-by-shop/${shopId}`,{withCredentials:true}) 
            setShop(result.data.shop)
@@ -21,12 +25,19 @@ function Shop() {
         } catch (error) {
             console.log(shop)
             console.log(error)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     useEffect(()=>{
 handleShop()
     },[shopId])
+
+  if (isLoading) {
+    return <Loader message="Fetching shop details..." />
+  }
+
   return (
     <div className='min-h-screen bg-gray-50'>
         <button className='absolute top-4 left-4 z-20 flex items-center gap-2 bg-black/50 hover:bg-black/70 text-white px-3 py-2 rounded-full shadow-md transition' onClick={()=>navigate("/")}>
@@ -47,7 +58,7 @@ handleShop()
         </div>}
 
 <div className='max-w-7xl mx-auto px-6 py-10'>
-<h2 className='flex items-center justify-center gap-3 text-3xl font-bold mb-10 text-gray-800'><FaUtensils color='red'/> Our Menu</h2>
+<h2 className='flex items-center justify-center gap-3 text-4xl font-extrabold mb-10 bg-gradient-to-r from-[#ff4d2d] to-orange-400 bg-clip-text text-transparent'><FaUtensils color='red'/> Our Menu</h2>
 
 {items.length>0?(
     <div className='flex flex-wrap justify-center gap-8'>

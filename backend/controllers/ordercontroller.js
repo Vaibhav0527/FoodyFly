@@ -25,7 +25,7 @@ export const placeOrder = async (req, res) => {
         const groupItemsByShop = {}
 
         cartItems.forEach(item => {
-            const shopId = item.shop
+            const shopId = item.shop._id || item.shop
             if (!groupItemsByShop[shopId]) {
                 groupItemsByShop[shopId] = []
             }
@@ -217,7 +217,7 @@ export const updateOrderStatus = async (req, res) => {
         }
         shopOrder.status = status
         let deliveryBoysPayload = []
-        if (status == "out of delivery" && !shopOrder.assignment) {
+        if (status == "out of delivery") {
             const { longitude, latitude } = order.deliveryAddress
             const nearByDeliveryBoys = await User.find({
                 role: "deliveryBoy",
@@ -248,13 +248,23 @@ export const updateOrderStatus = async (req, res) => {
                 })
             }
 
-            const deliveryAssignment = await DeliveryAssignment.create({
-                order: order?._id,
-                shop: shopOrder.shop,
-                shopOrderId: shopOrder?._id,
-                brodcastedTo: candidates,
-                status: "brodcasted"
-            })
+            let deliveryAssignment;
+            if (shopOrder.assignment) {
+                deliveryAssignment = await DeliveryAssignment.findById(shopOrder.assignment)
+                if (deliveryAssignment) {
+                    deliveryAssignment.brodcastedTo = candidates
+                    await deliveryAssignment.save()
+                }
+            }
+            if (!deliveryAssignment) {
+                deliveryAssignment = await DeliveryAssignment.create({
+                    order: order?._id,
+                    shop: shopOrder.shop,
+                    shopOrderId: shopOrder?._id,
+                    brodcastedTo: candidates,
+                    status: "brodcasted"
+                })
+            }
 
             shopOrder.assignedDeliveryBoy = deliveryAssignment.assignedTo
             shopOrder.assignment = deliveryAssignment._id
@@ -272,7 +282,7 @@ export const updateOrderStatus = async (req, res) => {
                 availableBoys.forEach(boy => {
                     const boySocketId = boy.socketId
                     if (boySocketId) {
-                        io.to(boySocketId).emit('newAssignment', {
+                        console.log('Emitting newAssignment to:', boySocketId, boy.fullname); io.to(boySocketId).emit('newAssignment', {
                             sentTo:boy._id,
                             assignmentId: deliveryAssignment._id,
                             orderId: deliveryAssignment.order._id,
@@ -414,7 +424,7 @@ export const getCurrentOrder = async (req, res) => {
             })
 
         if (!assignment) {
-            return res.status(400).json({ message: "assignment not found" })
+            return res.status(200).json(null)
         }
         if (!assignment.order) {
             return res.status(400).json({ message: "order not found" })

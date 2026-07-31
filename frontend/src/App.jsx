@@ -23,6 +23,8 @@ import TrackOrderPage from './pages/TrackOrderPage'
 import Shop from './pages/Shop'
 import { io } from 'socket.io-client'
 import { setSocket } from './redux/userSlice'
+import Loader from './components/Loader'
+import Profile from './pages/Profile'
 
 
 export const serverUrl="http://localhost:8000"
@@ -35,7 +37,7 @@ const App = () => {
   useGetItemsByCity()
   useGetMyOrders()
   useUpdateLocation()
-  const {userData}=useSelector(state=>state.user)
+  const { userData, isAppLoading } = useSelector(state => state.user)
 
 
    useEffect(()=>{
@@ -46,10 +48,15 @@ if(userData){
   socketInstance.emit('identity',{userId:userData._id})
 }
 })
-return ()=>{
-  socketInstance.disconnect()
-}
+    return ()=>{
+      socketInstance.disconnect()
+    }
   },[userData?._id])
+
+  if (isAppLoading) {
+    return <Loader message="Starting up..." />
+  }
+
   return (
     <Routes>
       <Route path='/signup' element={!userData?<SignUp/>:<Navigate to={"/"}/>}/>
@@ -65,6 +72,7 @@ return ()=>{
       <Route path='/my-orders' element={userData?<MyOrders/>:<Navigate to={"/signin"}/>}/>
       <Route path='/track-order/:orderId' element={userData?<TrackOrderPage/>:<Navigate to={"/signin"}/>}/>                             
       <Route path='/shop/:shopId' element={userData?<Shop/>:<Navigate to={"/signin"}/>}/>
+      <Route path='/profile' element={userData?<Profile/>:<Navigate to={"/signin"}/>}/>
       
       
 

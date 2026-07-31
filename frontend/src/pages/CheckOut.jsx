@@ -14,6 +14,7 @@ import { FaMobileScreenButton } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
 import { addMyOrder } from '../redux/userSlice';
 import { serverUrl } from '../App';
+import { ClipLoader } from "react-spinners";
 
 function RecenterMap({ location }) {
   if (location.lat && location.lon) {
@@ -29,6 +30,7 @@ function CheckOut() {
   const { cartItems, totalAmount, userData } = useSelector(state => state.user)
   const [addressInput, setAddressInput] = useState("")
   const [paymentMethod, setPaymentMethod] = useState("cod")
+  const [isProcessing, setIsProcessing] = useState(false)
   const navigate = useNavigate()
   const dispatch = useDispatch()
   
@@ -74,6 +76,7 @@ function CheckOut() {
     }
   }
   const handlePlaceOrder = async () => {
+    setIsProcessing(true)
     try {
       const result = await axios.post(`${serverUrl}/api/order/place-order`, {
         paymentMethod,
@@ -90,6 +93,7 @@ function CheckOut() {
 
       if (paymentMethod == "cod") {
         dispatch(addMyOrder(result.data))
+        setIsProcessing(false)
         navigate("/order-placed")
       } else {
         const orderId = result.data.orderId
@@ -100,6 +104,7 @@ function CheckOut() {
 
     } catch (error) {
       console.log(error)
+      setIsProcessing(false)
     }
   }
 
@@ -109,7 +114,7 @@ function CheckOut() {
       key: "rzp_test_RTG6UVPhFDFKyw",
       amount: razorOrder.amount,
       currency: 'INR',
-      name: "Vingo",
+      name: "FoodyFly",
       description: "Food Delivery Website",
       order_id: razorOrder.id,
       handler: async function (response) {
@@ -138,7 +143,7 @@ function CheckOut() {
     setAddressInput(address)
   }, [address])
   return (
-    <div className='min-h-screen bg-[#fff9f6] flex items-center justify-center p-6'>
+    <div className='min-h-screen bg-slate-50 flex items-center justify-center p-6'>
       <div className=' absolute top-[20px] left-[20px] z-[10]' onClick={() => navigate("/")}>
         <IoIosArrowRoundBack size={35} className='text-[#ff4d2d]' />
       </div>
@@ -210,26 +215,28 @@ function CheckOut() {
             {cartItems.map((item, index) => (
               <div key={index} className='flex justify-between text-sm text-gray-700'>
                 <span>{item.name} x {item.quantity}</span>
-                <span>₹{item.price * item.quantity}</span>
+                <span>&#8377;{item.price * item.quantity}</span>
               </div>
 
             ))}
             <hr className='border-gray-200 my-2' />
             <div className='flex justify-between font-medium text-gray-800'>
               <span>Subtotal</span>
-              <span>{totalAmount}</span>
+              <span>&#8377;{totalAmount}</span>
             </div>
             <div className='flex justify-between text-gray-700'>
               <span>Delivery Fee</span>
-              <span>{deliveryFee == 0 ? "Free" : deliveryFee}</span>
+              <span>{deliveryFee == 0 ? "Free" : <>&#8377;{deliveryFee}</>}</span>
             </div>
             <div className='flex justify-between text-lg font-bold text-[#ff4d2d] pt-2'>
               <span>Total</span>
-              <span>{AmountWithDeliveryFee}</span>
+              <span>&#8377;{AmountWithDeliveryFee}</span>
             </div>
           </div>
         </section>
-        <button className='w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-xl font-semibold' onClick={handlePlaceOrder}> {paymentMethod == "cod" ? "Place Order" : "Pay & Place Order"}</button>
+        <button className='w-full bg-[#ff4d2d] hover:bg-[#e64526] text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 transition duration-200 shadow-md' onClick={handlePlaceOrder} disabled={isProcessing}>
+          {isProcessing ? <ClipLoader size={20} color='white' /> : (paymentMethod == "cod" ? "Place Order" : "Pay & Place Order")}
+        </button>
 
       </div>
     </div>

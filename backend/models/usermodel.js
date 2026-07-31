@@ -32,6 +32,10 @@ const userSchema = new mongoose.Schema({
     otpExpires: {
         type: Date
     },
+    profilePic: {
+        type: String,
+        default: ""
+    },
      socketId:{
         type:String
     },

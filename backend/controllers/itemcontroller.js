@@ -104,7 +104,7 @@ export const getItemByCity = async (req, res) => {
         }
         const shopIds=shops.map((shop)=>shop._id)
 
-        const items=await Item.find({shop:{$in:shopIds}})
+        const items=await Item.find({shop:{$in:shopIds}}).populate("shop", "name image")
         return res.status(200).json(items)
 
     } catch (error) {
@@ -116,7 +116,7 @@ export const getItemByCity = async (req, res) => {
 export const getItemsByShop=async (req,res) => {
     try {
         const {shopId}=req.params
-        const shop=await Shop.findById(shopId).populate("items")
+        const shop=await Shop.findById(shopId).populate({path:"items", populate:{path:"shop", select:"name image"}})
         if(!shop){
             return res.status(400).json("shop not found")
         }

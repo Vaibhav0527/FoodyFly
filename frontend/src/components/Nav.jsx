@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FaLocationDot } from "react-icons/fa6";
+import { FaLocationDot, FaBars } from "react-icons/fa6";
 import { IoIosSearch } from "react-icons/io";
 import { FiShoppingCart } from "react-icons/fi";
 import { IoSearchOutline } from "react-icons/io5";
@@ -15,6 +15,8 @@ function Nav() {
   const { userData ,currentCity,cartItems} = useSelector(state => state.user)
   const [showInfo, setShowInfo] = useState(false)
   const [showMobileSearch, setShowMobileSearch] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+    const [showProfileModal, setShowProfileModal] = useState(false)
   const [addressInput, setAddressInput] = useState("")
   const [query,setQuery]=useState("")
   const dispatch=useDispatch()
@@ -64,12 +66,20 @@ handleSearchItems()
 
 
   return (
-    <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-[#fff9f6] shadow-md'>
+    <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100'>
       
-      {/* Left: Logo */}
-      <h1 className="text-3xl font-bold text-[#ff4d2d] tracking-wide">
-        Vingo
-      </h1>
+      {/* Left: Hamburger (mobile) + Logo */}
+      <div className="flex items-center gap-3">
+        <button 
+          className="md:hidden text-gray-800 text-2xl"
+          onClick={() => setShowMobileMenu(true)}
+        >
+          <FaBars />
+        </button>
+        <h1 className="text-3xl font-bold text-[#ff4d2d] tracking-wide">
+          FoodyFly
+        </h1>
+      </div>
 
       {/* Center: Location + Search (hidden on small) */}
       <div className='hidden md:flex items-center gap-4'>
@@ -82,12 +92,12 @@ handleSearchItems()
          <button className='bg-[#ff4d2d] hover:bg-[#e64526] text-white px-3 py-2 rounded-lg flex items-center justify-center' onClick={getLatLngByAddress}><IoSearchOutline size={17} /></button>
 
         {/* Search Box */}
-        <div className="w-[280px] h-[50px] bg-white shadow-lg rounded-full items-center px-[15px] gap-[10px] hidden md:flex">
+        <div className="w-[280px] h-[50px] bg-slate-50 border border-gray-200 hover:border-orange-300 transition-colors shadow-inner rounded-full items-center px-[20px] gap-[10px] hidden md:flex">
           <IoIosSearch size={20} className="text-[#ff4d2d]" />
           <input 
             type="text" 
             placeholder="Search delicious food..." 
-            className="flex-1 text-gray-700 text-sm outline-none placeholder-gray-400"
+            className="flex-1 bg-transparent text-gray-700 text-sm outline-none placeholder-gray-400"
             onChange={(e)=>setQuery(e.target.value)} value={query}
           />
         </div>
@@ -120,10 +130,14 @@ handleSearchItems()
         {/* User Avatar */}
         {userData?.fullname && (
           <div 
-            className='w-[40px] h-[40px] rounded-full flex items-center justify-center bg-[#ff4d2d] text-white text-[18px] shadow-xl font-semibold cursor-pointer'
+            className='w-[40px] h-[40px] rounded-full flex items-center justify-center bg-[#ff4d2d] text-white text-[18px] shadow-xl font-semibold cursor-pointer overflow-hidden'
             onClick={() => setShowInfo(prev => !prev)}
           >
-            {userData.fullname.slice(0, 1)}
+            {userData?.profilePic ? (
+                <img src={userData.profilePic} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+                userData.fullname.slice(0, 1).toUpperCase()
+            )}
           </div>
         )}
 
@@ -131,7 +145,13 @@ handleSearchItems()
         {showInfo && (
           <div className="absolute top-[80px] right-[10px] w-[180px] bg-white shadow-2xl rounded-xl p-[20px] flex flex-col gap-[10px] z-[9999]">
             <div className='text-[17px] font-semibold'>{userData.fullname}</div>
-            <div className='text-[#ff4d2d] font-semibold cursor-pointer'onClick={handleLogOut}>Log Out</div>
+            <div 
+                className='text-gray-700 font-medium cursor-pointer hover:text-orange-500 transition-colors'
+                onClick={() => { setShowInfo(false); navigate("/profile"); }}
+            >
+                My Profile
+            </div>
+            <div className='text-[#ff4d2d] font-semibold cursor-pointer hover:opacity-80 transition-opacity' onClick={handleLogOut}>Log Out</div>
           </div>
         )}
       </div>
@@ -143,7 +163,7 @@ handleSearchItems()
           <input
             type="text"
             placeholder="Search delicious food..."
-            className="flex-1 text-gray-700 text-sm outline-none placeholder-gray-400"
+            className="flex-1 bg-transparent text-gray-700 text-sm outline-none placeholder-gray-400"
             autoFocus
             onChange={(e)=>setQuery(e.target.value)} value={query}
           />
@@ -154,7 +174,41 @@ handleSearchItems()
           />
         </div>
       )}
-    </div>
+
+      {/* Mobile Hamburger Drawer */}
+      {showMobileMenu && (
+        <>
+          <div className="fixed inset-0 bg-black/40 z-[9999]" onClick={() => setShowMobileMenu(false)}></div>
+          <div className="fixed top-0 left-0 w-[70vw] h-screen bg-white z-[10000] p-5 shadow-2xl flex flex-col gap-6 transform transition-transform duration-300">
+            <div className="flex justify-between items-center border-b pb-4">
+              <h1 className="text-2xl font-bold text-[#ff4d2d]">FoodyFly</h1>
+              <IoClose size={28} className="text-gray-600 cursor-pointer" onClick={() => setShowMobileMenu(false)} />
+            </div>
+            
+            <div className="flex flex-col gap-5">
+              <div className="flex flex-col gap-2">
+                <label className="text-sm font-medium text-gray-700 font-semibold">Delivery Location</label>
+                <div className="flex items-center gap-2">
+                  <FaLocationDot size={20} className="text-[#ff4d2d]" />
+                  <span className="text-gray-600 font-medium truncate">{currentCity}</span>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  <input type="text" className='flex-1 border border-gray-300 rounded-lg p-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#ff4d2d]' placeholder='Enter Address' value={addressInput} onChange={(e) => setAddressInput(e.target.value)} />
+                  <button className='bg-[#ff4d2d] text-white px-3 py-2 rounded-lg' onClick={getLatLngByAddress}><IoSearchOutline size={17} /></button>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
+                <button className='w-full text-left py-2 text-gray-800 font-semibold' onClick={()=>{navigate("/my-orders"); setShowMobileMenu(false)}}>
+                  My Orders
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+          </div>
   )
 }
 export default Nav
+

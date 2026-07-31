@@ -33,7 +33,7 @@ return ()=>{
 }
   },[socket]) 
   return (
-    <div className='"w-full min-h-screen bg-[#fff9f6] flex justify-center px-4'>
+    <div className='"w-full min-h-screen bg-slate-50 flex justify-center px-4'>
       <div className='w-full max-w-[800px] p-4'>
 
         <div className='flex items-center gap-[20px] mb-6 '>

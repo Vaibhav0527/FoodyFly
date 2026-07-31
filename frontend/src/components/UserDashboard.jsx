@@ -70,8 +70,28 @@ const UserDashboard = () => {
   }, [categories])
 
   return (
-    <div className='w-screen min-h-screen flex flex-col gap-8 items-center bg-[#fff9f6] overflow-y-auto pb-10'>
+    <div className='w-screen min-h-screen flex flex-col gap-8 items-center bg-slate-50 overflow-y-auto pb-10 font-sans'>
       <Nav />
+
+      {/* Hero Banner Section */}
+      <div className='w-full pt-20 pb-4'>
+        <div className='max-w-6xl mx-auto px-4 sm:px-6 w-full'>
+          <div className='w-full bg-gradient-to-r from-orange-500 to-[#ff4d2d] rounded-3xl p-8 sm:p-14 text-white shadow-lg relative overflow-hidden flex flex-col justify-center min-h-[300px]'>
+            {/* Decorative background circle */}
+            <div className='absolute -top-24 -right-24 w-64 h-64 bg-white opacity-10 rounded-full blur-3xl'></div>
+            <div className='absolute -bottom-24 -left-24 w-80 h-80 bg-black opacity-10 rounded-full blur-3xl'></div>
+            
+            <div className='relative z-10 max-w-2xl'>
+              <h1 className='text-4xl sm:text-6xl font-extrabold mb-4 tracking-tight leading-tight'>
+                Craving something <br/> <span className='text-yellow-300'>delicious?</span>
+              </h1>
+              <p className='text-lg sm:text-xl opacity-90 mb-8 font-medium'>
+                Discover the best food and drinks in {currentCity}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Search Results */}
       {searchItems && searchItems.length > 0 && (
@@ -86,8 +106,8 @@ const UserDashboard = () => {
       )}
 
       {/* Inspiration for First Order */}
-      <div className="w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]">
-        <h1 className='text-gray-800 text-2xl sm:text-3xl'>Inspiration for your first order</h1>
+      <div className="w-full max-w-6xl flex flex-col gap-5 items-start px-4 sm:px-6">
+        <h1 className='text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight'>Inspiration for your first order</h1>
         <div className='w-full relative'>
           {showLeftCateButton &&
             <button className='absolute left-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#e64528] z-10' onClick={() => scrollHandler(cateScrollRef, "left")}>
@@ -95,7 +115,7 @@ const UserDashboard = () => {
             </button>
           }
 
-          <div className='w-full flex overflow-x-auto gap-4 pb-2' ref={cateScrollRef}>
+          <div className='w-full flex overflow-x-auto no-scrollbar gap-4 pb-2' ref={cateScrollRef}>
             {categories.map((cate, index) => (
               <CategoryCard
                 name={cate.category}
@@ -115,8 +135,8 @@ const UserDashboard = () => {
       </div>
 
       {/* Best Shops */}
-      <div className='w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]'>
-        <h1 className='text-gray-800 text-2xl sm:text-3xl'>Best Shops in {currentCity}</h1>
+      <div className='w-full max-w-6xl flex flex-col gap-5 items-start px-4 sm:px-6 mt-4'>
+        <h1 className='text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight'>Best Shops in {currentCity}</h1>
         <div className='w-full relative'>
           {showLeftShopButton &&
             <button className='absolute left-0 top-1/2 -translate-y-1/2 bg-[#ff4d2d] text-white p-2 rounded-full shadow-lg hover:bg-[#e64528] z-10' onClick={() => scrollHandler(shopScrollRef, "left")}>
@@ -124,8 +144,8 @@ const UserDashboard = () => {
             </button>
           }
 
-          <div className='w-full flex overflow-x-auto gap-4 pb-2' ref={shopScrollRef}>
-            {shopInMyCity.length > 0 ? (
+          <div className='w-full flex overflow-x-auto no-scrollbar gap-4 pb-2' ref={shopScrollRef}>
+            {shopInMyCity?.length > 0 ? (
               shopInMyCity.map((shop, index) => (
                 <CategoryCard
                   name={shop.name}
@@ -151,11 +171,11 @@ const UserDashboard = () => {
       </div>
 
       {/* Suggested Food Items */}
-      <div className='w-full max-w-6xl flex flex-col gap-5 items-start p-[10px]'>
-        <h1 className='text-gray-800 text-2xl sm:text-3xl'>Suggested Food Items</h1>
+      <div className='w-full max-w-6xl flex flex-col gap-5 items-start px-4 sm:px-6 mt-4'>
+        <h1 className='text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight mb-2'>Suggested Food Items</h1>
 
-        <div className='w-full h-auto flex flex-wrap gap-[20px] justify-center'>
-          {updatedItemsList.length > 0 ? (
+        <div className='w-full h-auto flex flex-wrap gap-[20px] justify-center sm:justify-start'>
+          {updatedItemsList?.length > 0 ? (
             updatedItemsList.map((item, index) => (
               <FoodCard key={index} data={item} />
             ))

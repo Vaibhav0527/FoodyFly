@@ -16,13 +16,14 @@ function CartItemCard({data}) {
         
     }
   return (
-    <div className='flex items-center justify-between bg-white p-4 rounded-xl shadow border'>
+    <div className='flex items-center justify-between bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-gray-100'>
       <div className='flex items-center gap-4'>
         <img src={data.image} alt="" className='w-20 h-20 object-cover rounded-lg border'/>
         <div>
             <h1 className='font-medium text-gray-800'>{data.name}</h1>
-            <p className='text-sm text-gray-500'>₹{data.price} x {data.quantity}</p>
-            <p className="font-bold text-gray-900">₹{data.price*data.quantity}</p>
+            {data.shop?.name && <p className='text-xs text-[#ff4d2d] font-semibold bg-orange-50 px-2 py-0.5 rounded inline-block mb-1'>{data.shop.name}</p>}
+            <p className='text-sm text-gray-500'>&#8377;{data.price} x {data.quantity}</p>
+            <p className="font-bold text-gray-900">&#8377;{data.price*data.quantity}</p>
         </div>
       </div>
       <div className='flex items-center gap-3'>

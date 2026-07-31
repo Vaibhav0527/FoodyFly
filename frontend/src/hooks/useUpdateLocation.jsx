@@ -16,7 +16,7 @@ const updateLocation=async (lat,lon) => {
 }
 
 navigator.geolocation.watchPosition((pos)=>{
-    updateLocation(pos.coords.latitude,pos.coords.longitude)
+    if(userData) updateLocation(pos.coords.latitude,pos.coords.longitude)
 })
     },[userData])
 }

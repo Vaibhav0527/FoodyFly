@@ -11,7 +11,7 @@ const OwnerDashboard = () => {
   const navigate = useNavigate()
 
   return (
-    <div className='w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto'>
+    <div className='w-screen min-h-screen flex flex-col gap-5 items-center bg-slate-50 overflow-y-auto'>
       <NavOwner />
       {!myShopData &&
         <div className='flex justify-center items-center p-4 sm:p-6'>
@@ -30,7 +30,7 @@ const OwnerDashboard = () => {
       }
       {myShopData &&
         <div className='w-full flex flex-col items-center gap-6 px-4 sm:px-6'>
-          <h1 className='text-2xl sm:text-3xl text-gray-900 flex items-center gap-3 mt-8 text-center'><FaUtensils className='text-[#ff4d2d] w-14 h-14 ' />Welcome to {myShopData.name}</h1>
+          <h1 className='text-2xl sm:text-4xl font-extrabold bg-gradient-to-r from-[#ff4d2d] to-orange-400 bg-clip-text text-transparent flex items-center gap-3 mt-8 text-center'><FaUtensils className='text-[#ff4d2d] w-14 h-14 ' />Welcome to {myShopData.name}</h1>
 
           <div className='bg-white shadow-lg rounded-xl overflow-hidden border border-orange-100 hover:shadow-2xl transition-all duration-300 w-full max-w-3xl relative'>
             <div className='absolute top-4 right-4 bg-[#ff4d2d] text-white p-2 rounded-full shadow-md hover:bg-orange-600 transition-colors cursor-pointer' onClick={() => navigate("/create-edit-shop")}>

@@ -5,12 +5,15 @@ import { MdPhone } from "react-icons/md";
 import { useDispatch } from 'react-redux';
 import { updateOrderStatus } from '../redux/userSlice';
 import { serverUrl } from '../App';
+import { ClipLoader } from "react-spinners";
 
 function OwnerOrderCard({ data }) {
      const [availableBoys,setAvailableBoys]=useState([])
+     const [isUpdating, setIsUpdating] = useState(false)
    
 const dispatch=useDispatch()
     const handleUpdateStatus=async (orderId,shopId,status) => {
+        setIsUpdating(true)
         try {
             const result=await axios.post(`${serverUrl}/api/order/update-status/${orderId}/${shopId}`,{status},{withCredentials:true})
              dispatch(updateOrderStatus({orderId,shopId,status}))
@@ -18,6 +21,8 @@ const dispatch=useDispatch()
              console.log(result.data)
         } catch (error) {
             console.log(error)
+        } finally {
+            setIsUpdating(false)
         }
     }
 
@@ -38,7 +43,7 @@ const dispatch=useDispatch()
                 <p className='text-xs text-gray-500'>Lat: {data?.deliveryAddress.latitude} , Lon {data?.deliveryAddress.longitude}</p>
             </div>
 
-            <div className='flex space-x-4 overflow-x-auto pb-2'>
+            <div className='flex space-x-4 overflow-x-auto no-scrollbar pb-2'>
                 {data.shopOrders.shopOrderItems.map((item, index) => (
                     <div key={index} className='flex-shrink-0 w-40 border rounded-lg p-2 bg-white"'>
                         <img src={item?.item?.image} alt="" className='w-full h-24 object-cover rounded' />
@@ -52,13 +57,14 @@ const dispatch=useDispatch()
 <span className='text-sm'>status: <span className='font-semibold capitalize text-[#ff4d2d]'>{data.shopOrders.status}</span>
 </span>
 
+{isUpdating ? <ClipLoader size={20} color="#ff4d2d" /> : (
 <select  className='rounded-md border px-3 py-1 text-sm focus:outline-none focus:ring-2 border-[#ff4d2d] text-[#ff4d2d]' onChange={(e)=>handleUpdateStatus(data._id,data.shopOrders.shop._id,e.target.value)}>
     <option value="">Change</option>
 <option value="pending">Pending</option>
 <option value="preparing">Preparing</option>
 <option value="out of delivery">Out Of Delivery</option>
 </select>
-
+)}
 </div>
 {data.shopOrders.status=="out of delivery" && 
 <div className="mt-3 p-2 border rounded-lg text-sm bg-orange-50 gap-4">

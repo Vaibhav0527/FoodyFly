@@ -24,7 +24,7 @@ const NavOwner = () => {
   }
 
   return (
-    <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-[#fff9f6] shadow-md'>
+    <div className='w-full h-[80px] flex items-center justify-between px-[20px] fixed top-0 z-[9999] bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-100'>
       
       <h1 className="text-3xl font-bold text-[#ff4d2d] tracking-wide">
         Foodie Fly 
@@ -56,21 +56,33 @@ const NavOwner = () => {
 
       {userData?.fullname && (
         <div 
-          className='w-[40px] h-[40px] rounded-full flex items-center justify-center bg-[#ff4d2d] text-white text-[18px] shadow-xl font-semibold cursor-pointer'
+          className='w-[40px] h-[40px] rounded-full flex items-center justify-center bg-[#ff4d2d] text-white text-[18px] shadow-xl font-semibold cursor-pointer overflow-hidden'
           onClick={() => setShowInfo(prev => !prev)}
         >
-          {userData.fullname.slice(0, 1)}
+          {userData?.profilePic ? (
+              <img src={userData.profilePic} alt="Profile" className="w-full h-full object-cover" />
+          ) : (
+              userData.fullname.slice(0, 1).toUpperCase()
+          )}
         </div>
       )}
 
       {showInfo && (
         <div className="absolute top-[80px] right-[10px] w-[180px] bg-white shadow-2xl rounded-xl p-[20px] flex flex-col gap-[10px] z-[9999]">
           <div className='text-[17px] font-semibold'>{userData.fullname}</div>
-          <div className='text-[#ff4d2d] font-semibold cursor-pointer' onClick={handleLogOut}>Log Out</div>
+          <div 
+              className='text-gray-700 font-medium cursor-pointer hover:text-orange-500 transition-colors'
+              onClick={() => { setShowInfo(false); navigate("/profile"); }}
+          >
+              My Profile
+          </div>
+          <div className='text-[#ff4d2d] font-semibold cursor-pointer hover:opacity-80 transition-opacity' onClick={handleLogOut}>Log Out</div>
         </div>
       )}
-    </div>
+
+          </div>
   ) 
 }
 
 export default NavOwner;
+

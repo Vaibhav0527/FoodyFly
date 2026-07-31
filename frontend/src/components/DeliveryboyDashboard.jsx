@@ -10,13 +10,14 @@ import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxi
 
 const DeliveryboyDashboard = () => {
   const { userData, socket } = useSelector(state => state.user);
-  const [availableAssignments, setAvailableAssignments] = useState(null)
+  const [availableAssignments, setAvailableAssignments] = useState([])
   const [currentOrder, setCurrentOrder] = useState(null)
   const [showOtpBox, setShowOtpBox] = useState(false)
   const [todayDeliveries, setTodayDeliveries] = useState([])
   const [otp, setOtp] = useState("")
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState("")
+  const [acceptingId, setAcceptingId] = useState(null)
   const [deliveryBoyLocation, setDeliveryBoyLocation] = useState(null)
    useEffect(()=>{
 if(!socket || userData.role!=="deliveryBoy") return
@@ -69,12 +70,16 @@ return ()=>{
     }
   }
   const acceptOrder = async (assignmentId) => {
+    setAcceptingId(assignmentId)
     try {
       const result = await axios.get(`${serverUrl}/api/order/accept-order/${assignmentId}`, { withCredentials: true })
       console.log(result.data)
       await getCurrentOrder()
+      await getAssignments()
     } catch (error) {
       console.log(error)
+    } finally {
+      setAcceptingId(null)
     }
   }
   const sendOtp = async () => {
@@ -89,11 +94,13 @@ return ()=>{
       setLoading(false)
     } catch (error) {
       console.log(error)
+      setMessage(error.response?.data?.message || "Invalid or Expired OTP")
       setLoading(false)
     }
   }
   const verifyOtp = async () => {
     setMessage("")
+    setLoading(true)
 
     try {
       const result = await axios.post(`${serverUrl}/api/order/verify-delivery-otp`, {
@@ -102,12 +109,18 @@ return ()=>{
 
       console.log(result.data)
       setMessage(result.data.message)
-      location.reload()
-
-
-
+      setTimeout(() => {
+        setCurrentOrder(null)
+        setShowOtpBox(false)
+        setOtp("")
+        setMessage("")
+        handleTodayDeliveries()
+        getAssignments()
+      }, 2000)
     } catch (error) {
       console.log(error)
+      setMessage(error.response?.data?.message || "Invalid or Expired OTP")
+      setLoading(false)
     }
   }
 
@@ -141,17 +154,18 @@ useEffect(()=>{
   }, [userData])
 
   return (
-    <div className='w-screen min-h-screen flex flex-col gap-5 items-center bg-[#fff9f6] overflow-y-auto'>
+    <div className='w-screen min-h-screen flex flex-col gap-5 items-center bg-slate-50 overflow-y-auto'>
       <Navboy />
       <div className='w-full max-w-[800px] flex flex-col gap-5 items-center'>
-        <div className='bg-white rounded-2xl shadow-md p-5 flex flex-col justify-start items-center w-[90%] border border-orange-100 text-center gap-2'>
-          <h1 className='text-xl font-bold text-[#ff4d2d]'>Welcome, {userData.fullname}</h1>
+        <div className='w-full bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row justify-between items-center mb-6 gap-4'>
+          <h1 className='text-2xl font-extrabold bg-gradient-to-r from-[#ff4d2d] to-orange-400 bg-clip-text text-transparent'>Welcome, {userData.fullname}</h1>
     <p className='text-[#ff4d2d] '><span className='font-semibold'>Latitude:</span> {deliveryBoyLocation?.lat}, <span className='font-semibold'>Longitude:</span> {deliveryBoyLocation?.lon}</p>
     </div>
 
         </div>
-        <div className='bg-white rounded-2xl shadow-md p-5 w-[90%] mb-6 border border-orange-100'>
-          <h1 className='text-lg font-bold mb-3 text-[#ff4d2d] '>Today Deliveries</h1>
+        <div className='w-full flex flex-col md:flex-row gap-6 mb-6'>
+          <div className='flex-1 bg-white p-5 rounded-2xl shadow-sm border border-gray-100'>
+            <h1 className='text-lg font-bold mb-3 text-gray-800'>Today Deliveries</h1>
 
           <ResponsiveContainer width="100%" height={200}>
             <BarChart data={todayDeliveries}>
@@ -162,8 +176,9 @@ useEffect(()=>{
               <Bar dataKey="count" fill='#ff4d2d' />
             </BarChart>
           </ResponsiveContainer>
+          </div>
 
-          <div className='max-w-sm mx-auto mt-6 p-6 bg-white rounded-2xl shadow-lg text-center'>
+          <div className='w-full md:w-1/3 bg-white p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center'>
             <h1 className='text-xl font-semibold text-gray-800 mb-2'>Today's Earning</h1>
             <span className='text-3xl font-bold text-green-600'>₹{totalEarning}</span>
           </div>
@@ -172,8 +187,8 @@ useEffect(()=>{
 
 
 
-        {!currentOrder && <div className='bg-white rounded-2xl p-5 shadow-md w-[90%] border border-orange-100'>
-          <h1 className='text-lg font-bold mb-4 flex items-center gap-2'>Available Orders</h1>
+        {!currentOrder && <div className='w-full bg-white p-5 rounded-2xl shadow-sm border border-gray-100 mt-6'>
+          <h1 className='text-lg font-bold mb-4 flex items-center gap-2 text-gray-800'>Available Orders</h1>
 
           <div className='space-y-4'>
             {availableAssignments?.length > 0
@@ -186,7 +201,9 @@ useEffect(()=>{
                       <p className='text-sm text-gray-500'><span className='font-semibold'>Delivery Address:</span> {a?.deliveryAddress.text}</p>
                       <p className='text-xs text-gray-400'>{a.items.length} items | {a.subtotal}</p>
                     </div>
-                    <button className='bg-orange-500 text-white px-4 py-1 rounded-lg text-sm hover:bg-orange-600' onClick={() => acceptOrder(a.assignmentId)}>Accept</button>
+                    <button className='bg-orange-500 text-white px-4 py-1 rounded-lg text-sm hover:bg-orange-600 flex justify-center items-center gap-2' onClick={() => acceptOrder(a.assignmentId)} disabled={acceptingId === a.assignmentId}>
+                      {acceptingId === a.assignmentId ? <ClipLoader size={15} color="white" /> : "Accept"}
+                    </button>
 
                   </div>
                 ))

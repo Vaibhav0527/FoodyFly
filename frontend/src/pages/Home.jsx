@@ -9,7 +9,7 @@ import DeliveryboyDashboard from '../components/DeliveryboyDashboard'
 function Home() {
     const {userData}=useSelector(state=>state.user)
   return (
-    <div className='w-[100vw] min-h-[100vh] pt-[100px] flex flex-col items-center bg-[#fff9f6]'>
+    <div className='w-[100vw] min-h-[100vh] pt-[100px] flex flex-col items-center bg-slate-50'>
       {userData.role=="user" && <UserDashboard/>}
       {userData.role=="owner" && <OwnerDashboard/>}
       {userData.role=="deliveryBoy" && <DeliveryboyDashboard/>}

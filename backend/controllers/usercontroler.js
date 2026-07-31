@@ -1,4 +1,5 @@
 import User from "../models/usermodel.js"
+import uploadOnCloudinary from "../utils/coudinary.js"
 
 export const getCurrentUser=async (req,res) => {
     try {
@@ -31,5 +32,31 @@ export const updateUserLocation=async (req,res) => {
         return res.status(200).json({message:'location updated'})
     } catch (error) {
            return res.status(500).json({message:`update location user error ${error}`})
+    }
+}
+
+export const updateProfile = async (req, res) => {
+    try {
+        const { fullname, mobile } = req.body;
+        const userId = req.userId;
+        
+        let profilePic;
+        if (req.file) {
+            profilePic = await uploadOnCloudinary(req.file.path);
+        }
+
+        const updateData = {};
+        if (fullname) updateData.fullname = fullname;
+        if (mobile) updateData.mobile = mobile;
+        if (profilePic) updateData.profilePic = profilePic;
+
+        const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" });
+        }
+
+        return res.status(200).json(user);
+    } catch (error) {
+        return res.status(500).json({ message: `update profile error ${error}` });
     }
 }
