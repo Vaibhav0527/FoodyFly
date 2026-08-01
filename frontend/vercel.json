@@ -1,0 +1,9 @@
+{
+  "name": "foodyfly-app",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

@@ -38,8 +38,15 @@ function AddItem() {
         setFrontendImage(URL.createObjectURL(file))
     }
 
+    const [errorMsg, setErrorMsg] = useState("")
+
     const handleSubmit = async (e) => {
         e.preventDefault()
+        if (!name || !price || !category || !foodType || !backendImage) {
+            setErrorMsg("Please fill out all fields and select an image.")
+            return
+        }
+        setErrorMsg("")
         setLoading(true)
         try {
             const formData = new FormData()
@@ -56,6 +63,7 @@ function AddItem() {
             navigate("/")
         } catch (error) {
             console.log(error)
+            setErrorMsg(error?.response?.data?.message || "Something went wrong")
             setLoading(false)
         }
     }
@@ -75,6 +83,7 @@ function AddItem() {
                     </div>
                 </div>
                 <form className='space-y-5' onSubmit={handleSubmit}>
+                    {errorMsg && <p className='text-red-500 text-sm text-center bg-red-50 p-2 rounded-lg border border-red-200'>{errorMsg}</p>}
                     <div>
                         <label className='block text-sm font-medium text-gray-700 mb-1'>Name</label>
                         <input type="text" placeholder='Enter Food Name' className='w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500'

@@ -32,13 +32,13 @@ watchId=navigator.geolocation.watchPosition((position)=>{
       longitude,
       userId:userData._id
     })
-  }),
+  },
   (error)=>{
     console.log(error)
   },
   {
     enableHighAccuracy:true
-  }
+  })
 }
 
 return ()=>{

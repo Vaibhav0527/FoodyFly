@@ -2,6 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 
 
+const savedCartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
+const savedTotalAmount = parseFloat(localStorage.getItem('totalAmount')) || 0;
+
 const userSlice=createSlice({
     name:"user",
     initialState:{
@@ -11,8 +14,8 @@ const userSlice=createSlice({
         currentAddress:null,
         shopInMyCity:null,
         itemsInMyCity:null,
-        cartItems:[],
-        totalAmount:0,
+        cartItems: savedCartItems,
+        totalAmount: savedTotalAmount,
         myOrders:[],
         searchItems:null,
         socket:null,
@@ -46,6 +49,8 @@ const userSlice=createSlice({
                 state.cartItems.push(cartItem)
             }
             state.totalAmount=state.cartItems.reduce((total,item)=>total+item.price*item.quantity,0)
+            localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+            localStorage.setItem('totalAmount', state.totalAmount);
         },
 
         updateQuantity:(state,action)=>{
@@ -55,11 +60,15 @@ const userSlice=createSlice({
                 item.quantity=quantity
             }
             state.totalAmount=state.cartItems.reduce((total,item)=>total+item.price*item.quantity,0)    
+            localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+            localStorage.setItem('totalAmount', state.totalAmount);
         },
         removeCartItem:(state,action)=>{
             const id=action.payload
             state.cartItems=state.cartItems.filter(i=>i.id!==id)
             state.totalAmount=state.cartItems.reduce((total,item)=>total+item.price*item.quantity,0)    
+            localStorage.setItem('cartItems', JSON.stringify(state.cartItems));
+            localStorage.setItem('totalAmount', state.totalAmount);
         },
         setMyOrders:(state,action)=>{
             state.myOrders=action.payload
